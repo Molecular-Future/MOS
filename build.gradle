@@ -1,0 +1,25 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+buildscript {
+	dependencies {  classpath "onight.osgi:zpp-gradle_1.8:3.4.0" }
+}
+
+version = '2020.1.0'
+
+project.group='org.mos.mcore'
+
+apply plugin: 'zippo'
+
+dependencies {
+	compile ("org.fc.zippo:org.fc.zippo.oapi:4.1.0")
+	compile 'joda-time:joda-time:2.9.9'
+	compile 'org.osgi:org.osgi.annotation:6.0.0'
+//	includeInJar ("org.bouncycastle:bcprov-jdk15on:1.64")
+	includeInJar "com.madgag.spongycastle:core:1.58.0.0"
+	includeInJar "com.madgag.spongycastle:prov:1.58.0.0"
+}
+
+jar {
+	manifest{ attributes( 'Import-Ignore':'org.codehaus,com.google,org.spongycastle') }
+}
