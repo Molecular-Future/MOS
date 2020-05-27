@@ -1,0 +1,148 @@
+syntax = "proto3";
+import "block.proto";
+import "transaction.proto";
+import "account.proto";
+
+package org.mos.mcore.model;
+
+enum ActionModule {
+	ACT = 0; // 账户相关
+	BCT = 1; // 区块相关
+	TCT = 2; // 交易相关
+	SIO = 3; // 链相关
+};
+
+enum ActionCommand {
+	GAC = 0; // 根据地址获取账户内容 req=AccountMessage resp=RetAccountMessage
+	
+	GBH = 10; // 根据区块hash获取区块内容 req=BlockMessage resp=RetBlockMessage
+	GBN = 11; // 根据区块高度获取区块(返回一组相同高度的区块) req=BlockMessage resp=RetBlockMessage
+	GBS = 12; // 列出一组高度相同的区块 req=BlockMessage resp=RetBlockMessage
+	GLB = 13; // 获取最新的区块 req=LastBlockMessage resp=RetBlockMessage
+	
+	GTH = 20; // 根据交易hash获取交易内容 req=TransactionMessage resp=RetTransactionMessage
+	
+	GGT = 30; // 根据token名称查询 req=TokenMessage resp=RetTokenMessage
+	GHC = 31; // 根据crypto-hash查询 req=CryptoMessage resp=RetCryptoMessage
+	GIC = 32; // 根据crypto-index查询 req=CryptoMessage resp=RetCryptoMessage
+	GCS = 33; // 根据symbol查询cryptotoken req=CryptoSummaryMessage resp=RetCryptoSummaryMessage
+	
+	CIO = 40; // 获取链信息 req=ChainSummaryMessage resp=RetChainSummaryMessage
+	
+	MTX = 50; // 创建交易 req=SendTransactionMessage resp=RetSendTransactionMessage
+	MTXJ = 51; // 创建交易 req=TransactionInfoImpl resp=RetSendTransactionMessage
+	
+	GCK = 55; // evfs获取chainkey公钥 req=GetChainKeyMessage   resp=RetGetChainKeyMessage
+}
+
+message RetGetChainKeyMessage{
+	int32 retCode = 1;
+	string retMsg = 2;
+	string chainKey = 3;//文件内容
+	string CKVersion = 4;//chainkey 版本
+}
+
+message ChainSummaryMessage {
+}
+message RetChainSummaryMessage {
+	message ChainSummaryBlock {
+		string hash = 1;
+		int64 height = 2;
+		int32 txSize = 3;
+		string time = 4;
+		string miner = 5;
+	}
+	
+	ChainSummaryBlock last = 1;
+	ChainSummaryBlock prev = 2;
+	int32 blockInterval = 3;
+	int32 txMessageQueueSize = 4;
+	int32 txConfirmQueueSize = 5;
+	double receiveTps = 6;
+	double maxReceiveTps = 7;
+	double processTps = 8;
+	double maxProcessTps = 9;
+	int64 totalCreateTx = 10;
+	int64 totalSyncTx = 11;
+	int64 totalReceiveTx = 12;
+	int64 totalProcessTx = 13;
+	int32 averageTxConfirmInterval = 14;
+	int32 maxTxConfirmInterval = 15;
+	string coinBase = 16;
+	int32 averageTxSize = 17;
+}
+
+message AccountMessage{
+	string address = 1;
+}
+
+message RetAccountMessage {
+	int32 retCode = 1;
+	string retMsg = 2;
+	AccountType type = 3;
+	enum AccountType {
+		ACCOUNT = 0;
+		UNIONACCOUNT = 1;
+		CONTRACT = 2;
+	}
+	bytes 	address = 10;
+	int32 	nonce = 13;
+	string 	balance = 14;
+	int32	status = 5;//0：正常，-1：异常锁定黑名单
+	bytes 	storage_trie_root =6;//trie_sub_addressess(token,crypto,code,0001(union_subaddrs),0000(storage))
+	bytes	ext_data = 7; //扩展信息
+	
+}
+
+message SendTransactionMessage {
+	string tx = 1;
+	string sign = 2;
+}
+
+message RetSendTransactionMessage {
+	int32 retCode = 1;
+	string retMsg = 2;
+	string hash = 3;
+	string contractHash = 4;
+}
+
+message LastBlockMessage {
+	BlockMessageType type = 3;
+	enum BlockMessageType {
+		SUMMARY = 0;
+		FULL = 1;
+	}
+}
+
+
+message BlockMessage {
+	string hash = 1;
+	int64 height = 2;
+	BlockMessageType type = 3;
+	enum BlockMessageType {
+		SUMMARY = 0;
+		FULL = 1;
+	}
+}
+
+message RetBlockMessage {
+	int32 retCode = 1;
+	string retMsg = 2;
+	repeated BlockInfo block = 3;
+}
+
+
+message TransactionMessage {
+	string hash = 1;
+}
+
+message RetTransactionMessage {
+	int32 retCode = 1;
+	string retMsg = 2;
+	TransactionInfo transaction = 3;
+}
+
+message TransactionInfoImpl{
+	TransactionInfo transaction = 1;
+	string sign = 2;
+}

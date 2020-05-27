@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package org.mos.mcore.model;
+
+message TransactionInfo {
+	bytes hash = 1;
+	TransactionBody body = 2;
+	bytes signature = 3;
+	TransactionStatus status = 4;
+	TransactionNode node = 5;
+	int64 accepttimestamp = 6;
+}
+
+enum TransactionType{
+	NORMAL = 0;
+	MULI_SIGN = 1;
+	RC20_CONTRACT = 2;
+	RC721_CONTRACT = 3;
+	CVM_CONTRACT = 4;
+	JSVM_CONTRACT = 5;
+}
+message TransactionBody {
+	int32 nonce = 1;
+	bytes address = 2;
+	repeated TransactionOutput outputs = 3;
+	int64 	fee_hi = 4;//手续费高位
+	int64 	fee_low = 5;//手续费低位;
+								//0普通账户,1=多重签名账户，2=20合约账户，3=721合约账户,4=CVM合约,5=JSVM合约(可并行)
+
+	int32	inner_codetype = 6;//内置指令交易[0=普通交易,1=多重签名交易,2=RC20交易，3=RC721交易，4=CVM合约调用,5=JSVM合约调用,6=evfs交易,7=链委员会,8=链管理员组
+	bytes   code_data = 7;//指令数据
+	bytes   ext_data = 8;
+	int64   timestamp = 9;
+}
+
+message TransactionOutput {
+	bytes address = 1;
+	bytes amount = 2;
+	bytes token = 3;
+	bytes tokenAmount = 4;
+	bytes symbol = 5;
+	repeated bytes cryptoToken = 6;
+}
+
+message TransactionNode {
+	string nid = 1;
+	bytes address = 2;
+}
+
+message TransactionStatus {
+	bytes status = 1;
+	bytes result = 2;
+	bytes hash = 3;
+	int64 height = 4;
+	int64 timestamp = 5;
+}
+
+message BroadcastTransactionMsg {
+	repeated bytes txHash = 1;
+	repeated bytes txDatas = 2;
+}
+

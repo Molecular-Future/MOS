@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+package org.mos.mcore.model;
+
+message AccountInfo {
+	bytes 	address = 1;
+	bytes   name = 2;
+	int32	version = 3;
+	int32 	nonce = 4;
+	bytes 	balance = 5;
+	int32	status = 6;//0：正常，-1：异常锁定黑名单
+	bytes 	storage_trie_root = 7;//trie_sub_addressess(token,crypto,code,0001(union_subaddrs),0000(storage))
+	bytes	ext_data = 8; //扩展信息
+	
+	enum AccountType {
+		NORMAL = 0; // 普通账户
+		MULI_SIGN = 1; // 多重签名账户
+		RC20_CONTRACT = 2; // 20合约账户
+		RC721_CONTRACT = 3; // 721合约账户
+		CVM_CONTRACT = 4; // CVM合约
+		JSVM_CONTRACT = 5; // JSVM合约(可并行)
+		UNIONACCOUNT = 6; // 联合账户
+	}
+	AccountType	type = 9;//账户类型：0普通账户,1=多重签名账户，2=20合约账户，3=721合约账户,4=CVM合约,5=JSVM合约(可并行)
+	
+	//repeated bytes union_coaddress = 7;
+	//bytes max = 3;
+	//repeated AccountTokenValue tokens = 7;
+	//repeated AccountCryptoValue cryptos = 8;
+	//bytes storage = 9;
+	//bytes codeHash = 10;
+	//bytes code = 11;
+	//bytes data = 12;
+	//int64 accumulatedTimestamp = 13;
+	//bytes accumulated = 14;
+	//bytes acceptMax = 4;
+	//int32 acceptLimit = 5;
+}
+
+message UnionAccount{
+	repeated bytes union_coaddress = 1;
+}
+
+message TokenPrintInfo {
+	bytes symbol = 1;
+	bytes address = 2;
+	int64 timestamp = 3;
+	bytes total_supply = 4;
+}
+
+message TokenValue {
+	bytes balance = 1;
+	bytes locked = 2;
+	bytes ext_data = 3;
+}
+message CryptoValue {
+	bytes token_hash = 1;
+	bytes symbol = 2;
+	int32 count = 3;
+	bytes cryptos = 4;
+	int64 ownertime = 5; // 所有人的账户地址
+	bytes owner = 6;
+	bytes lastowner = 7;
+	int64 timestamp = 8; // 
+	int32 nonce = 9;
+}
+
+
+message CryptoTokenPrintInfo {
+	bytes hash = 1; // Token的hash
+	int64 timestamp = 2; // Token创建时间
+	int64 index = 3; // 该Token发行时的索引
+	int64 total = 4; // 该Token的发行总数量
+	bytes symbol = 5; // Token的编号
+	bytes name = 6; // Token的名称
+	bytes owner = 7; // 所有人的账户地址
+	bytes data = 8;//数据信息
+}
+

@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package org.mos.mcore.model;
+
+message ChainKeyList {
+	map<string, ChainKey> chainKeys = 1;
+}
+
+message ChainKey {
+	string version = 1;
+	bytes publicKey = 2;
+	bytes privateKey = 3;
+}

@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package org.mos.mcore.model;
+
+message GenesisBlock {
+	GenesisBody body = 1;
+	ChainConfig chainconfig = 2;
+	string signature = 3;
+}
+
+message GenesisBody {
+	string hash = 1;
+	string coinbase = 2;
+	int64 timestamp = 3;
+	string parentHash = 4;
+	string extraData = 5;
+	int64 height = 6;
+
+	map<string, InitAccount> accounts = 7;
+	map<string, InitTransaction> txs = 8;
+	
+}
+
+message InitAccount {
+	string balance = 1;
+	string name = 2;
+	int32 nonce = 3;
+	int32 type = 4;
+	map<string, string> storages = 5;
+}
+
+message InitTransaction {
+	int32 nonce = 1;
+	string code_data = 2;
+	int64 timestamp = 3;
+	int32 inner_codetype = 4;
+	string sign = 5;
+	string address = 6;
+}
+message ChainConfig{
+	bytes	address = 1;
+	int32	blocked_tx_count = 2;
+	bytes	block_rewards = 3;
+    int32 	block_mine_epoch_ms = 4;
+    int32 	block_mine_timeout_ms = 5;
+    int32 	block_mine_max_continue = 6;
+    int32	block_version = 7;
+}
